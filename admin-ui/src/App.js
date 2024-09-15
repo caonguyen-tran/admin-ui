@@ -9,6 +9,9 @@ import QuizPage from "./pages/pages/QuizPage";
 import { useEffect } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import DownloadPage from "./pages/pages/DownloadPage";
+import QuestionSet from "./pages/pages/QuestionSet";
+import Question from "./pages/pages/Question";
+import CreateQuestion from "./pages/pages/CreateQuestion";
 
 const ProtectedRoute = ({ children }) => {
   const { current } = useAuth();
@@ -68,14 +71,39 @@ function App() {
               }
             />
             <Route
-              path="/quiz-page"
+              path="/question-set-page"
               element={
                 <ProtectedRoute>
-                  <QuizPage />
+                  <QuestionSet />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/question-page"
+              element={
+                <ProtectedRoute>
+                  <Question />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/answer-page"
+              element={
+                <ProtectedRoute>
+                  <QuestionSet />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/create-question/:questionSetId"
+              element={
+                <ProtectedRoute>
+                  <CreateQuestion />
                 </ProtectedRoute>
               }
             />
           </Routes>
+          
         </div>
       </BrowserRouter>
     </AuthProvider>

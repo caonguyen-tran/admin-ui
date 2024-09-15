@@ -17,7 +17,10 @@ export const adminEndpoints = {
     "admin-get-collection": `/${servicesUrl.admin_service}/admin/collection/get-all`,
     "admin-get-download": `/${servicesUrl.admin_service}/admin/collection/get-all-download`,
     "admin-get-word": `/${servicesUrl.admin_service}/admin/word/list-word`,
-    "admin-get-learned": `${servicesUrl.admin_service}/admin/word/list-learned`
+    "admin-get-learned": `/${servicesUrl.admin_service}/admin/word/list-learned`,
+    "admin-get-question-set": `/${servicesUrl.admin_service}/admin/quiz/get-list-question-set`,
+    "admin-get-question": `/${servicesUrl.admin_service}/admin/quiz/get-list-question`,
+    "admin-upload-file-create-questions": (questionSetId) => `/${servicesUrl.admin_service}/admin/quiz/create-multiple-question/${questionSetId}` 
 }
 
 export const authApi = (accessToken) => {
