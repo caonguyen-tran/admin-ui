@@ -147,7 +147,7 @@ function App() {
 
           {/* Special Routes */}
           <Route
-            path="/create-question/:questionSetId"
+            path="/question-set-page/create-question/:questionSetId"
             element={
               <ProtectedRoute>
                 <CreateQuestion />

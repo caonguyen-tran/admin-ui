@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import Table from "./common/Table";
 import { getDatetimeDetail } from "../utils/Common";
+import UserDialog from "./dialog/UserDialog";
 
 const UserTable = ({ users }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [dialogMode, setDialogMode] = useState('add');
+
   const columns = [
     {
       key: "user",
@@ -44,22 +49,48 @@ const UserTable = ({ users }) => {
     {
       key: "status",
       label: "Status",
-      render: () => (
-        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-          Active
+      render: (user) => (
+        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+          user.isActive 
+            ? 'bg-green-100 text-green-800' 
+            : 'bg-red-100 text-red-800'
+        }`}>
+          {user.isActive ? 'Active' : 'Inactive'}
         </span>
       ),
     },
   ];
 
   const handleAdd = () => {
-    // Handle add user
-    console.log("Add user");
+    setDialogMode('add');
+    setSelectedUser(null);
+    setIsDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleDialogSubmit = (userData) => {
+    if (dialogMode === 'add') {
+      // Handle create new user
+      console.log("Creating new user:", userData);
+    } else {
+      // Handle update existing user
+      console.log("Updating user:", userData);
+    }
+    setIsDialogOpen(false);
+    setSelectedUser(null);
   };
 
   const handleEdit = (user) => {
-    // Handle edit user
-    console.log("Edit user:", user);
+    setDialogMode('edit');
+    setSelectedUser({
+      ...user,
+      role: user.roles[0].name, // Convert roles array to single role
+    });
+    setIsDialogOpen(true);
   };
 
   const handleDelete = (user) => {
@@ -68,17 +99,26 @@ const UserTable = ({ users }) => {
   };
 
   return (
-    <Table
-      title="User Management"
-      data={users}
-      columns={columns}
-      onAdd={handleAdd}
-      onEdit={handleEdit}
-      onDelete={handleDelete}
-      searchFields={["username", "email"]}
-      searchPlaceholder="Search users by name or email..."
-      addButtonText="Add New User"
-    />
+    <>
+      <Table
+        title="User Management"
+        data={users}
+        columns={columns}
+        onAdd={handleAdd}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        searchFields={["username", "email"]}
+        searchPlaceholder="Search users by name or email..."
+        addButtonText="Add New User"
+      />
+      <UserDialog
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+        onSubmit={handleDialogSubmit}
+        user={selectedUser}
+        mode={dialogMode}
+      />
+    </>
   );
 };
 

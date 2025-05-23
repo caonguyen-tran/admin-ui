@@ -46,7 +46,7 @@ const QuestionTable = ({ questions }) => {
         <div className="space-y-1">
           {question.answers.map((answer, index) => (
             <div key={index} className="text-sm">
-              <span className="font-medium">{index + 1}.</span> {answer.content}
+              <span className="font-medium">{String.fromCharCode(65 + index)}.</span> {answer.content}
             </div>
           ))}
         </div>
