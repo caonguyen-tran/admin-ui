@@ -1,61 +1,93 @@
 import React from "react";
+import Table from "./common/Table";
 import { convertISOTimeToDatetime } from "../utils/Common";
 
-const CollectionTable = ({ collections }) => {
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Collections</h2>
-      <div className="flex mb-4 w-full justify-between px-2">
-        <div className="flex">
-          <input
-            type="text"
-            placeholder="Search Users"
-            className="border border-gray-300 rounded p-2 mr-2"
-          />
-          <button className="bg-blue-500 text-white px-4 py-2 rounded">
-            Go
-          </button>
+const QuizTable = ({ quizzes }) => {
+  const columns = [
+    {
+      key: "quiz",
+      label: "Quiz",
+      render: (quiz) => (
+        <div className="flex items-center">
+          <div className="flex-shrink-0 h-10 w-10">
+            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+              <span className="text-blue-600 font-medium">
+                {quiz.name.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          </div>
+          <div className="ml-4">
+            <div className="text-sm font-medium text-gray-900">{quiz.name}</div>
+            <div className="text-sm text-gray-500">ID: {quiz.id}</div>
+          </div>
         </div>
-        <button className="h-10 w-15 rounded-full bg-gray-500 shadow-inner text-center p-2">
-          <p className="">+ Thêm</p>
-        </button>
-      </div>
-      <div className="max-h-svh overflow-y-auto">
-        <table className="min-w-full bg-white border">
-          <thead className="sticky top-0 bg-gray-200">
-            <tr>
-              <th className="border px-4 py-2">ID</th>
-              <th className="border px-4 py-2">Name</th>
-              <th className="border px-4 py-2">Description</th>
-              <th className="border px-4 py-2">Image</th>
-              <th className="border px-4 py-2">Created Date</th>
-              <th className="border px-4 py-2">Updated Date</th>
-              <th className="border px-4 py-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {collections.map((item) => (
-              <tr key={item.id}>
-                <td className="border px-4 py-2">{item.id}</td>
-                <td className="border px-4 py-2">{item.name}</td>
-                <td className="border px-4 py-2">{item.description}</td>
-                <td className="border px-4 py-2">
-                  <img src={item.image} alt="img" />
-                </td>
-                <td className="border px-4 py-2">
-                  {convertISOTimeToDatetime(item.updateAt)}
-                </td>
-                <td className="border px-4 py-2">
-                  {convertISOTimeToDatetime(item.updateAt)}
-                </td>
-                <td className="border px-4 py-2">Action</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      ),
+    },
+    {
+      key: "description",
+      label: "Description",
+      render: (quiz) => (
+        <div className="max-w-xs truncate">{quiz.description}</div>
+      ),
+    },
+    {
+      key: "readingPart",
+      label: "Reading Part",
+      render: (quiz) => (
+        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+          {quiz.readingPart}
+        </span>
+      ),
+    },
+    {
+      key: "questionNumber",
+      label: "Questions",
+      render: (quiz) => (
+        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+          {quiz.questionNumber}
+        </span>
+      ),
+    },
+    {
+      key: "createdDate",
+      label: "Created Date",
+      render: (quiz) => convertISOTimeToDatetime(quiz.createdDate),
+    },
+    {
+      key: "updatedDate",
+      label: "Updated Date",
+      render: (quiz) => convertISOTimeToDatetime(quiz.updatedDate),
+    },
+  ];
+
+  const handleAdd = () => {
+    // Handle add quiz
+    console.log("Add quiz");
+  };
+
+  const handleEdit = (quiz) => {
+    // Handle edit quiz
+    console.log("Edit quiz:", quiz);
+  };
+
+  const handleDelete = (quiz) => {
+    // Handle delete quiz
+    console.log("Delete quiz:", quiz);
+  };
+
+  return (
+    <Table
+      title="Quiz Management"
+      data={quizzes}
+      columns={columns}
+      onAdd={handleAdd}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
+      searchFields={["name", "description", "readingPart"]}
+      searchPlaceholder="Search quizzes by name, description or reading part..."
+      addButtonText="Add New Quiz"
+    />
   );
 };
 
-export default CollectionTable;
+export default QuizTable;

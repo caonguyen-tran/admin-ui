@@ -1,5 +1,5 @@
 import axios from "axios"
-const BASE_URL = "http://localhost:8088/api";
+const BASE_URL = "http://34.29.166.181:8088/api";
 
 const servicesUrl = {
     user_service: "user-service",

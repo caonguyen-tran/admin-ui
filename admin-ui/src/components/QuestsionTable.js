@@ -1,76 +1,112 @@
-import React, { useState } from "react";
+import React from "react";
+import Table from "./common/Table";
 import { convertISOTimeToDatetime } from "../utils/Common";
 
 const QuestionTable = ({ questions }) => {
-  const [isCreate, setIsCreate] = useState()
-
-  const toggleIsCreate = () => {
-    setIsCreate(!isCreate)
-  }
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Question set</h2>
-      <div className="flex mb-4 w-full justify-between px-2">
-        <div className="flex">
-          <input
-            type="text"
-            placeholder="Search Users"
-            className="border border-gray-300 rounded p-2 mr-2"
-          />
-          <button className="bg-blue-500 text-white px-4 py-2 rounded">
-            Go
-          </button>
+  const columns = [
+    {
+      key: "questionSet",
+      label: "Question Set",
+      render: (question) => (
+        <div className="flex items-center">
+          <div className="flex-shrink-0 h-10 w-10">
+            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+              <span className="text-blue-600 font-medium">
+                {question.questionSet.name.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          </div>
+          <div className="ml-4">
+            <div className="text-sm font-medium text-gray-900">{question.questionSet.name}</div>
+            <div className="text-sm text-gray-500">ID: {question.questionSet.id}</div>
+          </div>
         </div>
-      </div>
-      <div className="max-h-svh overflow-y-auto">
-        <table className="min-w-full bg-white border">
-          <thead className="sticky top-0 bg-gray-200">
-            <tr>
-              <th className="border px-4 py-2">Question set id</th>
-              <th className="border px-4 py-2">Question set name</th>
-              <th className="border px-4 py-2">Reading part</th>
-              <th className="border px-4 py-2">Question Number</th>
-              <th className="border px-4 py-2">Content</th>
-              <th className="border px-4 py-2">Created Date</th>
-              <th className="border px-4 py-2">Updated Date</th>
-              <th className="border px-4 py-2">Answer 1</th>
-              <th className="border px-4 py-2">Answer 2</th>
-              <th className="border px-4 py-2">Answer 3</th>
-              <th className="border px-4 py-2">Answer 4</th>
-              <th className="border px-4 py-2">Explain Answer</th>
-              <th className="border px-4 py-2">Correct Answer</th>
-              <th className="border px-4 py-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {questions.map((item) => (
-              <tr key={item.id}>
-                <td className="border px-4 py-2">{item.questionSet.id}</td>
-                <td className="border px-4 py-2">{item.questionSet.name}</td>
-                <td className="border px-4 py-2">{item.questionSet.readingPart}</td>
-                <td className="border px-4 py-2">{item.questionNumber}</td>
-                <td className="border px-4 py-2">{item.questionContent}</td>
-                <td className="border px-4 py-2">
-                  {convertISOTimeToDatetime(item.createdDate)}
-                </td>
-                <td className="border px-4 py-2">
-                  {convertISOTimeToDatetime(item.updatedDate)}
-                </td>
-                <td className="border px-4 py-2">{item.answers[0].content}</td>
-                <td className="border px-4 py-2">{item.answers[1].content}</td>
-                <td className="border px-4 py-2">{item.answers[2].content}</td>
-                <td className="border px-4 py-2">{item.answers[3].content}</td>
-                <td className="border px-4 py-2">{item.explainAnswer}</td>
-                <td className="border px-4 py-2">{item.correctAnswer}</td>
-                <td className="border px-4 py-2">
-                    Sua
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      ),
+    },
+    {
+      key: "questionNumber",
+      label: "Question #",
+      render: (question) => (
+        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+          {question.questionNumber}
+        </span>
+      ),
+    },
+    {
+      key: "questionContent",
+      label: "Content",
+      render: (question) => (
+        <div className="max-w-xs truncate">{question.questionContent}</div>
+      ),
+    },
+    {
+      key: "answers",
+      label: "Answers",
+      render: (question) => (
+        <div className="space-y-1">
+          {question.answers.map((answer, index) => (
+            <div key={index} className="text-sm">
+              <span className="font-medium">{index + 1}.</span> {answer.content}
+            </div>
+          ))}
+        </div>
+      ),
+    },
+    {
+      key: "correctAnswer",
+      label: "Correct Answer",
+      render: (question) => (
+        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+          {question.correctAnswer}
+        </span>
+      ),
+    },
+    {
+      key: "explainAnswer",
+      label: "Explanation",
+      render: (question) => (
+        <div className="max-w-xs truncate">{question.explainAnswer}</div>
+      ),
+    },
+    {
+      key: "createdDate",
+      label: "Created Date",
+      render: (question) => convertISOTimeToDatetime(question.createdDate),
+    },
+    {
+      key: "updatedDate",
+      label: "Updated Date",
+      render: (question) => convertISOTimeToDatetime(question.updatedDate),
+    },
+  ];
+
+  const handleAdd = () => {
+    // Handle add question
+    console.log("Add question");
+  };
+
+  const handleEdit = (question) => {
+    // Handle edit question
+    console.log("Edit question:", question);
+  };
+
+  const handleDelete = (question) => {
+    // Handle delete question
+    console.log("Delete question:", question);
+  };
+
+  return (
+    <Table
+      title="Question Management"
+      data={questions}
+      columns={columns}
+      onAdd={handleAdd}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
+      searchFields={["questionSet.name", "questionContent", "explainAnswer"]}
+      searchPlaceholder="Search questions by set name, content or explanation..."
+      addButtonText="Add New Question"
+    />
   );
 };
 

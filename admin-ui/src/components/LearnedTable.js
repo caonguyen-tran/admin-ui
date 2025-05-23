@@ -1,64 +1,114 @@
 import React from "react";
+import Table from "./common/Table";
 import { convertISOTimeToDatetime } from "../utils/Common";
 
 const LearnedTable = ({ learned }) => {
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Learned</h2>
-      <div className="flex mb-4 w-full justify-between px-2">
-        <div className="flex">
-          <input
-            type="text"
-            placeholder="Search Users"
-            className="border border-gray-300 rounded p-2 mr-2"
-          />
-          <button className="bg-blue-500 text-white px-4 py-2 rounded">
-            Go
-          </button>
+  const columns = [
+    {
+      key: "word",
+      label: "Word",
+      render: (item) => (
+        <div className="flex items-center">
+          <div className="flex-shrink-0 h-10 w-10">
+            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+              <span className="text-blue-600 font-medium">
+                {item.wordResponse.word.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          </div>
+          <div className="ml-4">
+            <div className="text-sm font-medium text-gray-900">{item.wordResponse.word}</div>
+            <div className="text-sm text-gray-500">ID: {item.id}</div>
+          </div>
         </div>
-        <button className="h-10 w-15 rounded-full bg-gray-500 shadow-inner text-center p-2">
-          <p className="">+ Thêm</p>
-        </button>
-      </div>
-      <div className="max-h-svh overflow-y-auto">
-        <table className="min-w-full bg-white border">
-          <thead className="sticky top-0 bg-gray-200">
-            <tr>
-              <th className="border px-4 py-2">ID</th>
-              <th className="border px-4 py-2">Learn By</th>
-              <th className="border px-4 py-2">Word</th>
-              <th className="border px-4 py-2">Collection</th>
-              <th className="border px-4 py-2">Learn Date</th>
-              <th className="border px-4 py-2">Due Date</th>
-              <th className="border px-4 py-2">Learn Master Level</th>
-              <th className="border px-4 py-2">Success Rate</th>
-              <th className="border px-4 py-2">Review</th>
-            </tr>
-          </thead>
-          <tbody>
-            {learned.map((item) => (
-              <tr key={item.id}>
-                <td className="border px-4 py-2">{item.id}</td>
-                <td className="border px-4 py-2">{item.learnBy}</td>
-                <td className="border px-4 py-2">{item.wordResponse.word}</td>
-                <td className="border px-4 py-2">
-                  {item.wordResponse.collectionId}
-                </td>
-                <td className="border px-4 py-2">
-                  {convertISOTimeToDatetime(item.learnDate)}
-                </td>
-                <td className="border px-4 py-2">
-                  {convertISOTimeToDatetime(item.dueDate)}
-                </td>
-                <td className="border px-4 py-2">{item.learnedMaster.name}</td>
-                <td className="border px-4 py-2">{item.successRate}</td>
-                <td className="border px-4 py-2">{item.review ? "true" : "false"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      ),
+    },
+    {
+      key: "learnBy",
+      label: "Learn By",
+      render: (item) => (
+        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+          {item.learnBy}
+        </span>
+      ),
+    },
+    {
+      key: "collection",
+      label: "Collection",
+      render: (item) => (
+        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+          {item.wordResponse.collectionId}
+        </span>
+      ),
+    },
+    {
+      key: "learnDate",
+      label: "Learn Date",
+      render: (item) => convertISOTimeToDatetime(item.learnDate),
+    },
+    {
+      key: "dueDate",
+      label: "Due Date",
+      render: (item) => convertISOTimeToDatetime(item.dueDate),
+    },
+    {
+      key: "learnedMaster",
+      label: "Master Level",
+      render: (item) => (
+        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+          {item.learnedMaster.name}
+        </span>
+      ),
+    },
+    {
+      key: "successRate",
+      label: "Success Rate",
+      render: (item) => (
+        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+          {item.successRate}%
+        </span>
+      ),
+    },
+    {
+      key: "review",
+      label: "Review",
+      render: (item) => (
+        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+          item.review ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        }`}>
+          {item.review ? "Yes" : "No"}
+        </span>
+      ),
+    },
+  ];
+
+  const handleAdd = () => {
+    // Handle add learned item
+    console.log("Add learned item");
+  };
+
+  const handleEdit = (item) => {
+    // Handle edit learned item
+    console.log("Edit learned item:", item);
+  };
+
+  const handleDelete = (item) => {
+    // Handle delete learned item
+    console.log("Delete learned item:", item);
+  };
+
+  return (
+    <Table
+      title="Learned Words Management"
+      data={learned}
+      columns={columns}
+      onAdd={handleAdd}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
+      searchFields={["wordResponse.word", "learnBy", "learnedMaster.name"]}
+      searchPlaceholder="Search by word, learner or master level..."
+      addButtonText="Add New Learned Word"
+    />
   );
 };
 

@@ -1,65 +1,84 @@
 import React from "react";
+import Table from "./common/Table";
 import { getDatetimeDetail } from "../utils/Common";
 
 const UserTable = ({ users }) => {
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Users</h2>
-      <div className="flex mb-4 w-full justify-between px-2">
-        <div className="flex">
-          <input
-            type="text"
-            placeholder="Search Users"
-            className="border border-gray-300 rounded p-2 mr-2"
-          />
-          <button className="bg-blue-500 text-white px-4 py-2 rounded">
-            Go
-          </button>
+  const columns = [
+    {
+      key: "user",
+      label: "User",
+      render: (user) => (
+        <div className="flex items-center">
+          <div className="flex-shrink-0 h-10 w-10">
+            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+              <span className="text-blue-600 font-medium">
+                {user.username.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          </div>
+          <div className="ml-4">
+            <div className="text-sm font-medium text-gray-900">{user.username}</div>
+            <div className="text-sm text-gray-500">ID: {user.id}</div>
+          </div>
         </div>
-        <button className="h-10 w-15 rounded-full bg-gray-500 shadow-inner text-center p-2"><p className="">+ Thêm</p></button>
-      </div>
-      <div className="max-h-svh overflow-y-auto">
-        <table className="min-w-full bg-white border">
-          <thead className="sticky top-0 bg-gray-200">
-            <tr>
-              <th className="border px-4 py-2">ID</th>
-              <th className="border px-4 py-2">Username</th>
-              <th className="border px-4 py-2">Email</th>
-              <th className="border px-4 py-2">Created Date</th>
-              <th className="border px-4 py-2">Updated Date</th>
-              <th className="border px-4 py-2">Authority</th>
-              <th className="border px-4 py-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td className="border px-4 py-2">{user.id}</td>
-                <td className="border px-4 py-2">{user.username}</td>
-                <td className="border px-4 py-2">{user.email}</td>
-                <td className="border px-4 py-2">
-                  {getDatetimeDetail(user.createdDate)}
-                </td>
-                <td className="border px-4 py-2">
-                  {getDatetimeDetail(user.updatedDate)}
-                </td>
-                <td className="border px-4 py-2">{user.roles[0].name}</td>
-                <td className="border px-4 py-2">
-                  <div className="flex flex-col align-middle justify-between">
-                    <button className="bg-red-500 w-20 h-8 mb-1 rounded-sm">
-                      Xóa
-                    </button>
-                    <button className="bg-green-500 w-20 h-8 rounded-sm">
-                      Cập nhật
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      ),
+    },
+    {
+      key: "email",
+      label: "Email",
+    },
+    {
+      key: "role",
+      label: "Role",
+      render: (user) => (
+        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+          {user.roles[0].name}
+        </span>
+      ),
+    },
+    {
+      key: "createdDate",
+      label: "Created Date",
+      render: (user) => getDatetimeDetail(user.createdDate),
+    },
+    {
+      key: "status",
+      label: "Status",
+      render: () => (
+        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+          Active
+        </span>
+      ),
+    },
+  ];
+
+  const handleAdd = () => {
+    // Handle add user
+    console.log("Add user");
+  };
+
+  const handleEdit = (user) => {
+    // Handle edit user
+    console.log("Edit user:", user);
+  };
+
+  const handleDelete = (user) => {
+    // Handle delete user
+    console.log("Delete user:", user);
+  };
+
+  return (
+    <Table
+      title="User Management"
+      data={users}
+      columns={columns}
+      onAdd={handleAdd}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
+      searchFields={["username", "email"]}
+      searchPlaceholder="Search users by name or email..."
+      addButtonText="Add New User"
+    />
   );
 };
 
