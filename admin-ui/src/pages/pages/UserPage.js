@@ -11,25 +11,30 @@ const UserPage = () => {
   const [error, setError] = useState(null);
   const { current } = useAuth();
   const [list, setList] = useState([]);
+  const [roleList, setRoleList] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await authApi(current.user.token).get(
+        adminEndpoints["admin-get-user"]
+      );
+      const role_res = await authApi(current.user.token).get(
+        adminEndpoints["admin-get-role"]
+      );
+      
+      setList(res.data.data);
+      setRoleList(role_res.data.data);
+    } catch (ex) {
+      console.error("Error fetching users:", ex);
+      setError("Failed to load users. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const res = await authApi(current.user.token).get(
-          adminEndpoints["admin-get-user"]
-        );
-        
-        setList(res.data.data);
-      } catch (ex) {
-        console.error("Error fetching users:", ex);
-        setError("Failed to load users. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, [current.user.token]);
 
@@ -57,7 +62,7 @@ const UserPage = () => {
               <TableLoading />
             </div>
           ) : (
-            <UserTable users={list} />
+            <UserTable users={list} roles={roleList} onUserUpdate={fetchData} />
           )}
         </div>
       </main>

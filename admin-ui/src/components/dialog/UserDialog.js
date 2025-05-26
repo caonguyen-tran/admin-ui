@@ -1,60 +1,37 @@
 import React, { useState, useEffect } from 'react';
+import Loading from '../../common/Loading';
 
-const UserDialog = ({ isOpen, onClose, onSubmit, user = null, mode = 'add' }) => {
+const UserDialog = ({ isOpen, onClose, onSubmit, user = null, mode = 'add', roles = [], isLoading = false }) => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    password: '',
-    role: 'USER',
-    isActive: true,
+    userId: '',
+    role: 'FREE_USER',
   });
 
   // Update form data when user prop changes (for edit mode)
   useEffect(() => {
-    if (user) {
-      setFormData({
-        username: user.username || '',
-        email: user.email || '',
-        password: '',
-        role: user.role || 'USER',
-        isActive: user.isActive ?? true,
-      });
-    } else {
-      // Reset form when opening for new user
-      setFormData({
-        username: '',
-        email: '',
-        password: '',
-        role: 'USER',
-        isActive: true,
-      });
-    }
+    setFormData({
+      username: user?.username || '',
+      email: user?.email || '',
+      userId: user?.id || '',
+      role: user?.role || 'FREE_USER',
+    });
   }, [user]);
 
   const handleChange = (e) => {
-    const { checked } = e.target;
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      isActive: checked
+      [name]: value,
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Create a copy of form data
-    const submitData = { ...formData };
-    
-    // If editing and password is empty, remove it from submission
-    if (user && !submitData.password) {
-      delete submitData.password;
-    }
-    
-    // Add user ID if editing
-    if (user) {
-      submitData.id = user.id;
-    }
-    
+    // Create a copy of form data and remove email
+    const { email, ...submitData } = formData;
     onSubmit(submitData);
   };
 
@@ -126,7 +103,6 @@ const UserDialog = ({ isOpen, onClose, onSubmit, user = null, mode = 'add' }) =>
               type="password"
               id="password"
               name="password"
-              value={formData.password}
               onChange={handleChange}
               required={!isEditMode}
               disabled={isEditMode}
@@ -146,13 +122,13 @@ const UserDialog = ({ isOpen, onClose, onSubmit, user = null, mode = 'add' }) =>
               name="role"
               value={formData.role}
               onChange={handleChange}
-              disabled={isEditMode}
-              className={`w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-base bg-white ${
-                isEditMode ? 'bg-gray-100 cursor-not-allowed' : ''
-              }`}
+              className={`w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-base bg-white`}
             >
-              <option value="USER">User</option>
-              <option value="ADMIN">Admin</option>
+              {roles.map((role) => (
+                <option key={role.id} value={role.name}>
+                  {role.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -167,12 +143,13 @@ const UserDialog = ({ isOpen, onClose, onSubmit, user = null, mode = 'add' }) =>
                 name="isActive"
                 checked={formData.isActive}
                 onChange={handleChange}
-                className="w-0 h-0 opacity-0 absolute"
+                className={`w-0 h-0 opacity-0 absolute`}
+                disabled={true}
               />
-              <span className={`relative inline-block w-12 h-6 rounded-full transition-colors duration-200 ease-in-out ${
+              <span className={`relative inline-block w-12 h-6 rounded-full transition-colors duration-200 ease-in-out cursor-not-allowed ${
                 formData.isActive ? 'bg-blue-600' : 'bg-gray-300'
               }`}>
-                <span className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200 ease-in-out transform ${
+                <span className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200 ease-in-out transform cursor-not-allowed ${
                   formData.isActive ? 'translate-x-6' : 'translate-x-0'
                 }`} />
               </span>
@@ -191,7 +168,7 @@ const UserDialog = ({ isOpen, onClose, onSubmit, user = null, mode = 'add' }) =>
               type="submit"
               className="px-6 py-3 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
             >
-              {isEditMode ? 'Update Status' : 'Add User'}
+              {isLoading ? 'Loading...' : isEditMode ? 'Update Status' : 'Add User'}
             </button>
           </div>
         </form>

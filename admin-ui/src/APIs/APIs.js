@@ -25,9 +25,12 @@ export const adminEndpoints = {
     "admin-get-learned": `/${servicesUrl.admin_service}/admin/word/list-learned`,
     "admin-get-question-set": `/${servicesUrl.admin_service}/admin/quiz/get-list-question-set`,
     "admin-get-question": `/${servicesUrl.admin_service}/admin/quiz/get-list-question`,
-    "admin-upload-file-create-questions": (questionSetId) => `/${servicesUrl.admin_service}/admin/quiz/create-multiple-question/${questionSetId}` 
+    "admin-create-question-set": `/${servicesUrl.admin_service}/admin/quiz/question-set/create`,
+    "admin-upload-file-create-questions": (questionSetId) => `/${servicesUrl.admin_service}/admin/quiz/create-multiple-question/${questionSetId}`,
+    "admin-update-user-role": `/${servicesUrl.admin_service}/admin/user/update-user`,
+    "admin-create-user": `/${servicesUrl.admin_service}/admin/user/register-user`,
+    "admin-get-role": `/${servicesUrl.admin_service}/admin/role/get-list`
 }
-
 export const authApi = (accessToken) => {
     return axios.create({
         baseURL: BASE_URL,

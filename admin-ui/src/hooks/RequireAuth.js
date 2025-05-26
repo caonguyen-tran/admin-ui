@@ -10,7 +10,6 @@ const RequireAuth = ({ children }) => {
   useEffect(() => {
     const checkToken = async () => {
       const data = localStorage.getItem("authData");
-      console.log(data)
       if (!data) {
         setIsValid(false);
         return <Navigate to="/login" replace />;

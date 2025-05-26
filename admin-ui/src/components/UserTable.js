@@ -2,11 +2,17 @@ import React, { useState } from "react";
 import Table from "./common/Table";
 import { getDatetimeDetail } from "../utils/Common";
 import UserDialog from "./dialog/UserDialog";
+import { adminEndpoints, authApi } from "../APIs/APIs";
+import { useAuth } from "../context/AuthContext";
 
-const UserTable = ({ users }) => {
+const UserTable = ({ users, roles, onUserUpdate }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [dialogMode, setDialogMode] = useState('add');
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const { current } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const columns = [
     {
@@ -51,7 +57,7 @@ const UserTable = ({ users }) => {
       label: "Status",
       render: (user) => (
         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-          user.isActive 
+          !user.isActive 
             ? 'bg-green-100 text-green-800' 
             : 'bg-red-100 text-red-800'
         }`}>
@@ -72,23 +78,47 @@ const UserTable = ({ users }) => {
     setSelectedUser(null);
   };
 
-  const handleDialogSubmit = (userData) => {
-    if (dialogMode === 'add') {
-      // Handle create new user
-      console.log("Creating new user:", userData);
-    } else {
-      // Handle update existing user
-      console.log("Updating user:", userData);
+  const handleDialogSubmit = async (userData) => {
+    try {
+      if (dialogMode === 'add') {
+        // Handle create new user
+        console.log("Creating new user:", userData);
+        // Add your API call here
+        setIsSuccess(true);
+      } else {
+        setIsLoading(true);
+        await authApi(current.user.token).post(
+          adminEndpoints["admin-update-user-role"],
+          userData
+        );
+        setIsSuccess(true);
+        setIsLoading(false);
+        // Refresh the user list after successful update
+        onUserUpdate();
+      }
+      setIsDialogOpen(false);
+      setSelectedUser(null);
+      setShowSuccessAlert(true);
+      
+      // Hide success alert after 3 seconds
+      setTimeout(() => {
+        setShowSuccessAlert(false);
+      }, 3000);
+    } catch (error) {
+      console.error('Error:', error);
+      setIsSuccess(false);
+      setShowSuccessAlert(true);
+      setTimeout(() => {
+        setShowSuccessAlert(false);
+      }, 3000);
     }
-    setIsDialogOpen(false);
-    setSelectedUser(null);
   };
 
   const handleEdit = (user) => {
     setDialogMode('edit');
     setSelectedUser({
       ...user,
-      role: user.roles[0].name, // Convert roles array to single role
+      role: user.roles[0].name,
     });
     setIsDialogOpen(true);
   };
@@ -117,7 +147,29 @@ const UserTable = ({ users }) => {
         onSubmit={handleDialogSubmit}
         user={selectedUser}
         mode={dialogMode}
+        roles={roles}
+        isLoading={isLoading}
       />
+      {showSuccessAlert && (
+        <div className="fixed top-4 right-4 z-50">
+          <div className={`bg-white rounded-lg shadow-lg p-4 border-l-4 ${
+            isSuccess ? 'border-green-500' : 'border-red-500'
+          }`}>
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg className={`h-5 w-5 ${
+                  isSuccess ? 'text-green-500' : 'text-red-500'
+                }`} viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm font-medium text-gray-900">{isSuccess ? 'User created successfully!' : 'Failed to save user. Please try again.'}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
