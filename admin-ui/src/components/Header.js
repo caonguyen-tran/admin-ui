@@ -7,10 +7,6 @@ const Header = () => {
     const navigate = useNavigate();
 
     const logout = () => {
-        // Remove token from localStorage
-        localStorage.removeItem('authData');
-        
-        // Update auth context
         dispatch({
             type: "LOGOUT"
         });

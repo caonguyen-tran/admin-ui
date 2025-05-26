@@ -3,13 +3,18 @@ const BASE_URL = "http://34.29.166.181:8088/api";
 
 const servicesUrl = {
     user_service: "user-service",
-    admin_service: "admin-service"
+    admin_service: "admin-service",
+    security_service: "security-service"
 }
 
 export const endpoints = {
     "auth-token": "/security-service/auth/token",
     "user-information": `/${servicesUrl.user_service}/user/information`,
     "user-roles": `/${servicesUrl.user_service}/user/get-roles`
+}
+
+export const securityEndpoints = {
+    "introspect-token": `/${servicesUrl.security_service}/auth/introspect`,
 }
 
 export const adminEndpoints = {

@@ -17,7 +17,6 @@ const UserPage = () => {
       try {
         setLoading(true);
         setError(null);
-        
         const res = await authApi(current.user.token).get(
           adminEndpoints["admin-get-user"]
         );

@@ -50,14 +50,13 @@ const Login = () => {
       const authData = {
         role: "ADMIN",
         username: user.username,
-        token: token
+        token: token,
       };
-      localStorage.setItem('authData', JSON.stringify(authData));
 
       // Update context
       dispatch({
         type: "LOGIN",
-        payload: authData
+        payload: authData,
       });
 
       navigate("/user-page");
@@ -72,7 +71,9 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Admin Dashboard</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          Admin Dashboard
+        </h2>
         {error && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
             {error}
