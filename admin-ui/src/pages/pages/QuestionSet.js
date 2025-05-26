@@ -12,22 +12,23 @@ const QuestionSet = () => {
   const [error, setError] = useState(null);
   const { current } = useAuth();
 
+  const fetchData = async () => {
+    try {
+      let res = await authApi(current.user.token).get(
+        adminEndpoints["admin-get-question-set"]
+      );
+      setList(res.data.data);
+      setError(null);
+    } catch (ex) {
+      console.error("Error fetching question sets:", ex);
+      setError("Failed to load question sets. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     setLoading(true);
-    const fetchData = async () => {
-      try {
-        let res = await authApi(current.user.token).get(
-          adminEndpoints["admin-get-question-set"]
-        );
-        setList(res.data.data);
-        setError(null);
-      } catch (ex) {
-        console.error("Error fetching question sets:", ex);
-        setError("Failed to load question sets. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
 
     fetchData();
   }, [current.user.token]);
@@ -57,7 +58,7 @@ const QuestionSet = () => {
             </div>
           ) : (
             <div className="bg-white rounded-lg shadow-sm">
-              <QuestionSetTable questionSets={list} />
+              <QuestionSetTable questionSets={list} onQuestionSetUpdate={fetchData} />
             </div>
           )}
         </div>

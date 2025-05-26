@@ -3,11 +3,18 @@ import Table from "./common/Table";
 import { convertISOTimeToDatetime } from "../utils/Common";
 import { Link } from "react-router-dom";
 import QuestionSetDialog from "./dialog/QuestionSetDialog";
+import AlertBox from "./common/AlertBox";
+import { useAuth } from "../context/AuthContext";
+import { adminEndpoints, authApi } from "../APIs/APIs";
 
-const QuestionSetTable = ({ questionSets }) => {
+const QuestionSetTable = ({ questionSets, onQuestionSetUpdate }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedQuestionSet, setSelectedQuestionSet] = useState(null);
-  const [dialogMode, setDialogMode] = useState('add');
+  const [dialogMode, setDialogMode] = useState("add");
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { current } = useAuth();
 
   const columns = [
     {
@@ -68,9 +75,13 @@ const QuestionSetTable = ({ questionSets }) => {
       key: "status",
       label: "Status",
       render: (set) => (
-        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-          set.isActive ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-        }`}>
+        <span
+          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+            set.isActive
+              ? "bg-green-100 text-green-800"
+              : "bg-yellow-100 text-yellow-800"
+          }`}
+        >
           {set.isActive ? "Active" : "Inactive"}
         </span>
       ),
@@ -98,13 +109,13 @@ const QuestionSetTable = ({ questionSets }) => {
   ];
 
   const handleAdd = () => {
-    setDialogMode('add');
+    setDialogMode("add");
     setSelectedQuestionSet(null);
     setIsDialogOpen(true);
   };
 
   const handleEdit = (set) => {
-    setDialogMode('edit');
+    setDialogMode("edit");
     setSelectedQuestionSet(set);
     setIsDialogOpen(true);
   };
@@ -114,10 +125,42 @@ const QuestionSetTable = ({ questionSets }) => {
     console.log("Delete question set:", set);
   };
 
-  const handleSubmit = (formData) => {
-    // Handle the form submission
-    console.log('Form submitted:', formData);
-    setIsDialogOpen(false);
+  const handleSubmit = async (formData) => {
+    try {
+      if (dialogMode === "add") {
+        setIsLoading(true);
+        await authApi(current.user.token).post(
+          adminEndpoints["admin-create-question-set"],
+          formData
+        );
+        setIsSuccess(true);
+        setIsLoading(false);
+        // Refresh the question set list after successful update
+        onQuestionSetUpdate();
+        setIsDialogOpen(false);
+        setShowSuccessAlert(true);
+
+        // Hide success alert after 3 seconds
+        setTimeout(() => {
+          setShowSuccessAlert(false);
+        }, 3000);
+      } else {
+        setIsLoading(true);
+        console.log("Update question set:", formData);
+        setIsSuccess(true);
+        setIsDialogOpen(false);
+        setSelectedQuestionSet(null);
+        setShowSuccessAlert(true);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setIsSuccess(false);
+      setShowSuccessAlert(true);
+      setTimeout(() => {
+        setShowSuccessAlert(false);
+      }, 3000);
+    }
   };
 
   return (
@@ -139,7 +182,15 @@ const QuestionSetTable = ({ questionSets }) => {
         onSubmit={handleSubmit}
         questionSet={selectedQuestionSet}
         mode={dialogMode}
+        isLoading={isLoading}
       />
+      {showSuccessAlert && (
+        <AlertBox
+          isSuccess={isSuccess}
+          messageSuccess="Question set updated successfully!"
+          messageError="Failed to save question set. Please try again."
+        />
+      )}
     </>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const QuestionSetDialog = ({ isOpen, onClose, onSubmit, questionSet = null, mode = 'add' }) => {
+const QuestionSetDialog = ({ isOpen, onClose, onSubmit, questionSet = null, mode = 'add', isLoading = false }) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -43,13 +43,7 @@ const QuestionSetDialog = ({ isOpen, onClose, onSubmit, questionSet = null, mode
     e.preventDefault();
     
     // Create a copy of form data
-    const submitData = { ...formData };
-    
-    // Add question set ID if editing
-    if (questionSet) {
-      submitData.id = questionSet.id;
-    }
-    
+    const {isActive, ...submitData} = formData;
     onSubmit(submitData);
   };
 
@@ -112,7 +106,7 @@ const QuestionSetDialog = ({ isOpen, onClose, onSubmit, questionSet = null, mode
               Reading Part
             </label>
             <input
-              type="text"
+              type="number"
               id="readingPart"
               name="readingPart"
               value={formData.readingPart}
@@ -128,7 +122,7 @@ const QuestionSetDialog = ({ isOpen, onClose, onSubmit, questionSet = null, mode
               Year Release
             </label>
             <input
-              type="text"
+              type="number"
               id="yearOf"
               name="yearOf"
               value={formData.yearOf}
@@ -151,11 +145,12 @@ const QuestionSetDialog = ({ isOpen, onClose, onSubmit, questionSet = null, mode
                 checked={formData.isActive}
                 onChange={handleChange}
                 className="w-0 h-0 opacity-0 absolute"
+                disabled={true}
               />
-              <span className={`relative inline-block w-12 h-6 rounded-full transition-colors duration-200 ease-in-out ${
+              <span className={`relative inline-block w-12 h-6 rounded-full transition-colors duration-200 ease-in-out cursor-not-allowed ${
                 formData.isActive ? 'bg-blue-600' : 'bg-gray-300'
               }`}>
-                <span className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200 ease-in-out transform ${
+                <span className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200 ease-in-out transform cursor-not-allowed ${
                   formData.isActive ? 'translate-x-6' : 'translate-x-0'
                 }`} />
               </span>
@@ -174,7 +169,7 @@ const QuestionSetDialog = ({ isOpen, onClose, onSubmit, questionSet = null, mode
               type="submit"
               className="px-6 py-3 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
             >
-              {isEditMode ? 'Update Question Set' : 'Add Question Set'}
+              {isLoading ? 'Loading...' : isEditMode ? 'Update Question Set' : 'Add Question Set'}
             </button>
           </div>
         </form>
