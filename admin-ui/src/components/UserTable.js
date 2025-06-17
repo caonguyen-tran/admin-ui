@@ -9,7 +9,7 @@ import AlertBox from "./common/AlertBox";
 const UserTable = ({ users, roles, onUserUpdate }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [dialogMode, setDialogMode] = useState('add');
+  const [dialogMode, setDialogMode] = useState("add");
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { current } = useAuth();
@@ -29,7 +29,9 @@ const UserTable = ({ users, roles, onUserUpdate }) => {
             </div>
           </div>
           <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">{user.username}</div>
+            <div className="text-sm font-medium text-gray-900">
+              {user.username}
+            </div>
             <div className="text-sm text-gray-500">ID: {user.id}</div>
           </div>
         </div>
@@ -42,11 +44,43 @@ const UserTable = ({ users, roles, onUserUpdate }) => {
     {
       key: "role",
       label: "Role",
-      render: (user) => (
-        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-          {user.roles[0].name}
-        </span>
-      ),
+      render: (user) => {
+        const role = user.roles[0].name;
+        console.log(role);
+        const roleColors = {
+          ADMIN: {
+            bg: "bg-red-100",
+            text: "text-red-800",
+          },
+          FREE_USER: {
+            bg: "bg-blue-100",
+            text: "text-blue-800",
+          },
+          TRIAL_USER: {
+            bg: "bg-green-100",
+            text: "text-green-800",
+          },
+          EXPIRED_USER: {
+            bg: "bg-gray-100",
+            text: "text-gray-800",
+          },
+          // Role mặc định nếu không khớp
+          PREMIUM_USER: {
+            bg: "bg-yellow-100",
+            text: "text-yellow-800",
+          },
+        };
+
+        const { bg, text } = roleColors[role] || roleColors.default;
+
+        return (
+          <span
+            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${bg} ${text}`}
+          >
+            {role}
+          </span>
+        );
+      },
     },
     {
       key: "createdDate",
@@ -57,19 +91,21 @@ const UserTable = ({ users, roles, onUserUpdate }) => {
       key: "status",
       label: "Status",
       render: (user) => (
-        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-          !user.isActive 
-            ? 'bg-green-100 text-green-800' 
-            : 'bg-red-100 text-red-800'
-        }`}>
-          {user.isActive ? 'Active' : 'Inactive'}
+        <span
+          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+            !user.isActive
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {!user.isActive ? "Active" : "Inactive"}
         </span>
       ),
     },
   ];
 
   const handleAdd = () => {
-    setDialogMode('add');
+    setDialogMode("add");
     setSelectedUser(null);
     setIsDialogOpen(true);
   };
@@ -81,7 +117,7 @@ const UserTable = ({ users, roles, onUserUpdate }) => {
 
   const handleDialogSubmit = async (userData) => {
     try {
-      if (dialogMode === 'add') {
+      if (dialogMode === "add") {
         // Handle create new user
         console.log("Creating new user:", userData);
         // Add your API call here
@@ -100,13 +136,13 @@ const UserTable = ({ users, roles, onUserUpdate }) => {
       setIsDialogOpen(false);
       setSelectedUser(null);
       setShowSuccessAlert(true);
-      
+
       // Hide success alert after 3 seconds
       setTimeout(() => {
         setShowSuccessAlert(false);
       }, 3000);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
       setIsSuccess(false);
       setShowSuccessAlert(true);
       setTimeout(() => {
@@ -116,7 +152,7 @@ const UserTable = ({ users, roles, onUserUpdate }) => {
   };
 
   const handleEdit = (user) => {
-    setDialogMode('edit');
+    setDialogMode("edit");
     setSelectedUser({
       ...user,
       role: user.roles[0].name,
@@ -152,7 +188,11 @@ const UserTable = ({ users, roles, onUserUpdate }) => {
         isLoading={isLoading}
       />
       {showSuccessAlert && (
-        <AlertBox isSuccess={isSuccess} messageSuccess="User created successfully!" messageError="Failed to save user. Please try again." />
+        <AlertBox
+          isSuccess={isSuccess}
+          messageSuccess="User created successfully!"
+          messageError="Failed to save user. Please try again."
+        />
       )}
     </>
   );
